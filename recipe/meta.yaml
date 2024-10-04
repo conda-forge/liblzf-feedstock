@@ -15,14 +15,14 @@ source:
   - path: liblzf.pc.in
 
 build:
-  number: 0
-  skip: true  # [win]
+  number: 1
   run_exports:
     - {{ pin_subpackage('liblzf', max_pin='x.x') }}
 
 requirements:
   build:
-    - {{ compiler('c') }}
+    - {{ compiler("c") }}
+    - {{ stdlib("c") }}
     - cmake
     - make
 
@@ -31,6 +31,9 @@ test:
     - test -f $PREFIX/lib/{{ name }}$SHLIB_EXT  # [unix]
     - test -f $PREFIX/lib/pkgconfig/{{ name }}.pc  # [unix]
     - test -f ${PREFIX}/lib/cmake/{{ name }}/{{ name }}-config.cmake  # [unix]
+    - if not exist %PREFIX%\\Library\\bin\\lzf%SHLIB_EXT% exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\lib\\pkgconfig\\{{ name }}.pc exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\lib\\cmake\\{{ name }}\\{{ name }}-config.cmake exit 1  # [win]
 
 about:
   home: http://oldhome.schmorp.de/marc/liblzf.html
