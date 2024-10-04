@@ -31,6 +31,9 @@ test:
     - test -f $PREFIX/lib/{{ name }}$SHLIB_EXT  # [unix]
     - test -f $PREFIX/lib/pkgconfig/{{ name }}.pc  # [unix]
     - test -f ${PREFIX}/lib/cmake/{{ name }}/{{ name }}-config.cmake  # [unix]
+    - if not exist %PREFIX%\\Library\\bin\\{{ name }}%SHLIB_EXT% exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\lib\\pkgconfig\\{{ name }}.pc exit 1  # [win]
+    - if not exist %PREFIX%\\Library\\lib\\cmake\\{{ name }}\\{{ name }}-config.cmake exit 1  # [win]
 
 about:
   home: http://oldhome.schmorp.de/marc/liblzf.html
