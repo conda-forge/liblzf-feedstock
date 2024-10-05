@@ -52,6 +52,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 	SOVERSION ${API_VERSION_MAJOR}
 	OUTPUT_NAME ${LIBRARY_NAME}
 )
+if(MSVC)
+	set_target_properties(${PROJECT_NAME} PROPERTIES
+		WINDOWS_EXPORT_ALL_SYMBOLS TRUE
+	)
+endif()
 add_library(${PROJECT_NAME}::${PROJECT_NAME} ALIAS ${PROJECT_NAME})
 
 add_library(embed INTERFACE)
