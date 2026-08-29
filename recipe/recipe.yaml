@@ -1,0 +1,74 @@
+schema_version: 1
+
+context:
+  version: "3.6"
+
+package:
+  name: liblzf
+  version: ${{ version }}
+
+source:
+  - url: https://dist.schmorp.de/liblzf/liblzf-${{ version }}.tar.gz
+    sha256: 9c5de01f7b9ccae40c3f619d26a7abec9986c06c36d260c179cedd04b89fb46a
+    patches:
+      - 0001-Make-sure-that-the-library-is-linked-with-C-symbols.patch
+  - path: CMakeLists.txt
+  - path: liblzf-config.cmake.in
+  - path: liblzf.pc.in
+
+build:
+  number: 4
+
+requirements:
+  build:
+    - ${{ compiler("c") }}
+    - ${{ stdlib("c") }}
+    - cmake
+    - make
+  run_exports:
+    - ${{ pin_subpackage("liblzf", upper_bound="x.x") }}
+
+tests:
+  - package_contents:
+      include:
+        - liblzf/lzf.h
+      lib:
+        - lzf
+      files:
+        exists:
+          - if: win
+            then: Library/lib/cmake/liblzf/liblzf-config.cmake
+            else: lib/cmake/liblzf/liblzf-config.cmake
+          - if: win
+            then: Library/lib/pkgconfig/liblzf.pc
+            else: lib/pkgconfig/liblzf.pc
+  - files:
+      recipe:
+        - test/*
+    requirements:
+      run:
+        - ${{ compiler("cxx") }}
+        - cmake
+        - if: unix
+          then: ninja
+    script:
+      - if: unix
+        then:
+          - cmake ${CMAKE_ARGS} -G Ninja -S test -B test_build
+          - cmake --build test_build --config Release
+          - ./test_build/test_liblzf
+      - if: win
+        then:
+          - cmake %CMAKE_ARGS% -S test -B test_build
+          - cmake --build test_build --config Release
+          - test_build\Release\test_liblzf.exe
+
+about:
+  homepage: https://software.schmorp.de/pkg/liblzf.html
+  summary: LZF is an extremely fast (not that much slower than a pure memcpy) compression algorithm.
+  license: BSD-2-Clause
+  license_file: LICENSE
+
+extra:
+  recipe-maintainers:
+    - Tobias-Fischer
