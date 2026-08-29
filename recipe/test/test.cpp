@@ -1,4 +1,4 @@
-#include <liblzf/lzf.h>
+#include <lzf.h>
 
 #include <array>
 #include <cstring>

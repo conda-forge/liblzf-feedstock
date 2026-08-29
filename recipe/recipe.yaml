@@ -49,10 +49,12 @@ tests:
       run:
         - ${{ compiler("cxx") }}
         - cmake
+        - if: unix
+          then: ninja
     script:
       - if: unix
         then:
-          - cmake ${CMAKE_ARGS} -S test -B test_build
+          - cmake ${CMAKE_ARGS} -G Ninja -S test -B test_build
           - cmake --build test_build --config Release
           - ./test_build/test_liblzf
       - if: win
